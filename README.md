@@ -1,4 +1,3 @@
-# aenet-lammps
 # About This package
 
 This package contains the neural network (ANN) atomic potential module implemented in LAMMPS, patch of \ae net for the LAMMPS library, and parameter file of iron.
