@@ -63,8 +63,10 @@ To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 After job done, please check lattice constant (lx) in log.lammps and log.lammps.g++_mm
 
 In in.aenet_mm(nve) the following two line activate the ANN potential:
+```
 pair_style      aenet
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe
+```
 
 The pair_style line might be always same.
 In pair_coeff line, v01 mean use our original version. 
