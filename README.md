@@ -10,7 +10,7 @@ If you have any troubles and questions, feel free to contact package author:Hide
 0. This manual is only case of gnu g++, gfortran, and openmpi under linux OS.
 If you use intel compiler, replace gfortran to ifort
 
-1. Clone this package to your pair_style line directory
+1. Clone this package to your appropriate directory
 ``` 
 git clone https://github.com/HidekiMori-CIT/aenet-lammps.git
 ```
