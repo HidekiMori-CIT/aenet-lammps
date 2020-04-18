@@ -1,6 +1,6 @@
-# About This package
+# About this package
 
-This package contains the neural network (ANN) atomic potential module implemented in LAMMPS, patch of \ae net for the LAMMPS library, and parameter file of iron.
+This package contains the neural network (ANN) atomic potential module implemented in LAMMPS, patch of aenet for the LAMMPS library, and ANN parameter file of BCC iron.
 This package is distributed under the GNU General Public License,and there is no warranty.
 If you have any troubles and questions, feel free to contact package author:Hideki Mori (morih@cit.sangitan.ac.jp)
 
