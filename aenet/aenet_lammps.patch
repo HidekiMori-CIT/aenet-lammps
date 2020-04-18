@@ -1,0 +1,243 @@
+diff -r -u aenet-2.0.3/src/Makefile.inc aenet/src/Makefile.inc
+--- aenet-2.0.3/src/Makefile.inc	2018-06-25 23:50:01.000000000 +0900
++++ aenet/src/Makefile.inc	2020-04-16 22:11:22.543373578 +0900
+@@ -57,7 +57,7 @@
+ generate : $(TARGET1)
+ train    : $(TARGET2)
+ predict  : $(TARGET3)
+-lib      : libaenet.a libaenet.so
++lib      : ../../libaenet.a libaenet.so
+ 
+ %.o : %.f90
+ 	$(FC) $(FCFLAGS) $< -o $*.o
+@@ -83,15 +83,16 @@
+ $(BIN)%.x : %.F90 $(OBJECTS) Makefile.inc
+ 	$(LD) $(LDFLAGS) -o $@-$(version)-$(SUFFIX) $< $(OBJECTS) $(LIB) $(NUMLIB)
+ 
+-libaenet.a : $(OBJECTS) Makefile.inc
++../../libaenet.a : $(OBJECTS) Makefile.inc
+ 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
++	@cp $(EXTRAMAKE) ../../Makefile.lammps
+ 
+ libaenet.so : $(PICOBJECTS) Makefile.inc
+ 	$(LIBLD) $(LIBFLAGS) $(PICOBJECTS) $(LIBLIB) -o $@
+ 
+ veryclean: clean
+ 	for f in $(TARGETS); do rm -f $$f-*; done
+-	if [ -e libaenet.a ]; then rm -f libaenet.a; fi
++	if [ -e ../../libaenet.a ]; then rm -f ../../libaenet.a; fi
+ 	if [ -e libaenet.so ]; then rm -f libaenet.so; fi
+ 	if [ -e TAGS ]; then rm -f TAGS; fi
+ 	for f in $(TESTS); do rm -f $$f-*; done
+diff -r -u aenet-2.0.3/src/ext/sfbasis.f90 aenet/src/ext/sfbasis.f90
+--- aenet-2.0.3/src/ext/sfbasis.f90	2018-06-25 23:50:01.000000000 +0900
++++ aenet/src/ext/sfbasis.f90	2020-04-16 22:04:48.915354808 +0900
+@@ -19,6 +19,9 @@
+ 
+ module sfbasis
+ 
++  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_char, c_bool, &
++                                         c_ptr, c_f_pointer, c_null_char
++
+   use io, only: io_unit
+ 
+   use chebyshev, only: chebyshev_polynomial, &
+@@ -66,6 +69,11 @@
+   double precision, parameter, private :: PI_INV = 1.0d0/PI
+   double precision, parameter, private :: PI2    = 2.0d0*PI
+   double precision, parameter, private :: EPS    = 1.0d-12
++  
++  logical                              :: switch_sfb = .false.
++  logical                              :: switch_cff = .false.
++  
++  integer(kind=c_int), bind(C, name='aenet_sfb_ver'), public :: aenet_sfb_ver = 0_c_int
+ 
+ contains
+ 
+@@ -139,6 +147,18 @@
+        s = s + 1
+     end do
+ 
++    select case(aenet_sfb_ver)
++    case(1)
++       switch_sfb = .true.
++       switch_cff = .false.
++    case(2)
++       switch_sfb = .true.
++       switch_cff = .true.
++    case default
++       switch_sfb = .false.
++       switch_cff = .false.
++    end select
++    
+     sfb%initialized = .true.
+ 
+   end function new_SFBasis
+@@ -747,6 +767,48 @@
+ 
+   !====================================================================!
+   !                                                                    !
++  !               new cutoff function                                  !
++  !                                                                    !
++  !====================================================================!
++
++
++  function new_sfb_fc(Rij, Rc, g) result(fc)
++
++    implicit none
++
++    double precision, intent(in) :: Rij, Rc
++    integer,          intent(in) :: g
++    double precision             :: fc
++
++    if (Rij >= Rc) then
++       fc  = 0.0d0
++    else
++       fc  = 1.d0 + g*(Rij/Rc)**(g+1) - (g+1)*(Rij/Rc)**(g)
++    end if
++
++  end function new_sfb_fc
++
++  !--------------------------------------------------------------------!
++
++  function new_sfb_fc_d1(Rij, Rc, g) result(dfc)
++
++    implicit none
++
++    double precision, intent(in) :: Rij, Rc
++    integer,          intent(in) :: g
++    double precision             :: dfc
++
++    if (Rij >= Rc) then
++       dfc = 0.0d0
++    else
++       dfc = (g*(g+1)*(Rij/Rc)**(g) - (g+1)*g*(Rij/Rc)**(g-1))/Rc
++    end if
++
++  end function new_sfb_fc_d1
++
++
++  !====================================================================!
++  !                                                                    !
+   !                      generic basis functions                       !
+   !                                                                    !
+   !====================================================================!
+@@ -766,16 +828,25 @@
+     double precision                     :: w_ij, dw_ij
+     double precision, dimension(sfb%r_N) :: f, df
+     integer                              :: i
++    integer                              :: g = 3
+ 
+     call sfb_assert_init(sfb)
+ 
+-    w_ij = sfb_fc(d_ij, sfb%r_Rc)
++    if(switch_cff)then
++       w_ij = new_sfb_fc(d_ij, sfb%r_Rc, g)
++    else
++       w_ij = sfb_fc(d_ij, sfb%r_Rc)
++    end if
+     f = chebyshev_polynomial(d_ij, 0.0d0, sfb%r_Rc, sfb%r_order)
+ 
+     values(1:sfb%r_N) = w_ij*f(1:sfb%r_N)
+ 
+     if (present(deriv_i) .and. present(deriv_j)) then
+-       dw_ij = sfb_fc_d1(d_ij, sfb%r_Rc)
++       if(switch_cff)then
++          dw_ij = new_sfb_fc_d1(d_ij, sfb%r_Rc, g)
++       else
++          dw_ij = sfb_fc_d1(d_ij, sfb%r_Rc)
++       end if
+        df = chebyshev_polynomial_d1(d_ij, 0.0d0, sfb%r_Rc, sfb%r_order)
+        forall (i=1:sfb%r_N)
+           deriv_i(:,i) = -R_ij/d_ij*(dw_ij*f(i) + w_ij*df(i))
+@@ -808,20 +879,46 @@
+     double precision, dimension(3)       :: di_cos_ikj, dj_cos_ikj, dk_cos_ikj
+     double precision, dimension(3)       :: di_w_ijk, dj_w_ijk, dk_w_ijk
+     integer                              :: i
++    
++    double precision                     :: h_cos
++    integer                              :: g = 5
+ 
+     call sfb_assert_init(sfb)
+-
+-    fc_j = sfb_fc(d_ij, sfb%a_Rc)
+-    fc_k = sfb_fc(d_ik, sfb%a_Rc)
++    
++    if(switch_cff)then
++       fc_j = new_sfb_fc(d_ij, sfb%a_Rc, g)
++       fc_k = new_sfb_fc(d_ik, sfb%a_Rc, g)
++    else
++       fc_j = sfb_fc(d_ij, sfb%a_Rc)
++       fc_k = sfb_fc(d_ik, sfb%a_Rc)
++    end if
+     w_ijk = fc_j*fc_k
+-    f = chebyshev_polynomial(cos_ijk, 0.0d0, PI, sfb%a_order)
++    
++    if(switch_sfb)then
++       h_cos = 0.5d0*(cos_ijk+1.d0)
++       f = chebyshev_polynomial(h_cos, -1.d0, 1.d0, sfb%a_order)
++    else
++       f = chebyshev_polynomial(cos_ijk, 0.0d0, PI, sfb%a_order)
++    end if
+ 
+     values(1:sfb%a_N) = w_ijk*f
+ 
+     if (present(deriv_i) .and. present(deriv_j) .and. present(deriv_k)) then
+-       dfc_j = sfb_fc_d1(d_ij, sfb%a_Rc)
+-       dfc_k = sfb_fc_d1(d_ik, sfb%a_Rc)
+-       df = chebyshev_polynomial_d1(cos_ijk, 0.0d0, PI, sfb%a_order)
++       
++       if(switch_cff)then
++          dfc_j = new_sfb_fc_d1(d_ij, sfb%a_Rc, g)
++          dfc_k = new_sfb_fc_d1(d_ik, sfb%a_Rc, g)
++       else
++          dfc_j = sfb_fc_d1(d_ij, sfb%a_Rc)
++          dfc_k = sfb_fc_d1(d_ik, sfb%a_Rc)
++       end if
++       
++       if(switch_sfb)then
++          df = 0.5d0*chebyshev_polynomial_d1(h_cos, -1.0d0, 1.d0, sfb%a_order)
++       else
++          df = chebyshev_polynomial_d1(cos_ijk, 0.0d0, PI, sfb%a_order)
++       end if
++       
+        id_ij2 = 1.0d0/(d_ij*d_ij)
+        id_ik2 = 1.0d0/(d_ik*d_ik)
+        id_ij_ik = 1.0d0/(d_ij*d_ik)
+diff -r -u aenet-2.0.3/src/makefiles/Makefile.gfortran_serial aenet/src/makefiles/Makefile.gfortran_serial
+--- aenet-2.0.3/src/makefiles/Makefile.gfortran_serial	2018-06-25 23:50:01.000000000 +0900
++++ aenet/src/makefiles/Makefile.gfortran_serial	2020-04-16 22:12:19.323376285 +0900
+@@ -18,12 +18,14 @@
+ # 2015-05-26 Alexander Urban (AU) and Nongnuch Artrith (NA)
+ #-----------------------------------------------------------------------
+ 
++EXTRAMAKE = ../../Makefile.lammps.gfortran
++
+ SUFFIX   = gfortran_serial
+ 
+ FC       = gfortran -c
+ LD       = gfortran
+ DEBUG    =
+-FCFLAGS  = -O3 -pedantic -fexternal-blas $(DEBUG)
++FCFLAGS  = -O3 -pedantic $(DEBUG)
+ LDFLAGS  = -static-libgfortran $(DEBUG)
+ NUMLIB   = -llapack -lblas
+ 
+diff -r -u aenet-2.0.3/src/makefiles/Makefile.ifort_serial aenet/src/makefiles/Makefile.ifort_serial
+--- aenet-2.0.3/src/makefiles/Makefile.ifort_serial	2018-06-25 23:50:01.000000000 +0900
++++ aenet/src/makefiles/Makefile.ifort_serial	2020-04-16 22:12:38.587377204 +0900
+@@ -18,11 +18,13 @@
+ # 2015-05-26 Alexander Urban (AU) and Nongnuch Artrith (NA)
+ #-----------------------------------------------------------------------
+ 
++EXTRAMAKE = ../../Makefile.lammps.ifort
++
+ SUFFIX   = ifort_serial
+ 
+ FC       = ifort -c
+ LD       = ifort
+-DEBUG    = -g -warn all -check bounds
++DEBUG    = 
+ FCFLAGS  = -O2 $(DEBUG)
+ LDFLAGS  = -static-intel $(DEBUG)
+ NUMLIB   = -mkl
