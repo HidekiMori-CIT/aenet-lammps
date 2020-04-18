@@ -67,7 +67,7 @@ pair_style      aenet
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe
 
 The pair_style line might be always same.
-In pair_coeff line, V01 mean use our original version. 
+In pair_coeff line, v01 mean use our original version. 
 If you chose v00, you can use parameter file from original \ae net package.
 The Fe betwenn v01 and 10tw-10tw.ann set element(s).
 The term:10tw-10tw.ann set name of parameter file, in this case, file name is set as Fe.10tw-10tw.ann.
