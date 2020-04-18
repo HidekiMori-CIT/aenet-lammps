@@ -18,9 +18,6 @@ thermo          10
 reset_timestep  0
 timestep        0.0005
 
-dump            d1 all cfg 100 cfg/run.*.cfg mass type xs ys zs id type
-dump_modify     d1 element Fe
-
 velocity        all create 500 12345 dist gaussian
 
 fix             f1 all nve
