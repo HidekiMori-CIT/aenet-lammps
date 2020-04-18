@@ -73,5 +73,6 @@ The Fe betwenn v01 and 10tw-10tw.ann set element(s).
 The term:10tw-10tw.ann set name of parameter file, in this case, file name is set as Fe.10tw-10tw.ann.
 The final Fe assign elements to atom type.
 If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_style line as follow:  
+```
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe 
-
+```
