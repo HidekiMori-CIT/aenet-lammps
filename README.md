@@ -51,10 +51,10 @@ note: other compile option of LAMMPS, please see LAMMPS manual.
 
 # How to run LAMMPS with ANN potential
 
-In ANN/Fe/ directory parameter file and example input file for LAMMPS
-Parameter file of ANN potential for BCC iron : Fe.10tw-10tw.ann
-Example input file for LAMMPS (1): in.aenet_mm, lattice optimization of BCC iron
-Example input file for LAMMPS (2): in.aenet_nve, run nve MD of BCC iron
+In ANN/Fe/ directory parameter file and example input file for LAMMPS  
+Parameter file of ANN potential for BCC iron : Fe.10tw-10tw.ann  
+Example input file for LAMMPS (1): in.aenet_mm, lattice optimization of BCC iron  
+Example input file for LAMMPS (2): in.aenet_nve, run nve MD of BCC iron  
 
 To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 ```
@@ -70,7 +70,7 @@ pair_coeff      * * v01 Fe 10tw-10tw.ann Fe
 
 The pair_style line might be always same.
 In pair_coeff line, v01 mean use our original version. 
-If you chose v00, you can use parameter file from original \ae net package.
+If you chose v00, you can use parameter file from original aenet package.
 The Fe betwenn v01 and 10tw-10tw.ann set element(s).
 The term:10tw-10tw.ann set name of parameter file, in this case, file name is set as Fe.10tw-10tw.ann.
 The final Fe assign elements to atom type.
