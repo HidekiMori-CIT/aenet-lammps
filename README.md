@@ -29,7 +29,7 @@ cp aenet-2.0.3.tar.bz2 lammps-3Mar20/lib/aenet/
 
 4. Patch and compile aenet library
 ```
-cd lammps-3Mar20/lib/aenet
+cd lammps-3Mar20/lib/aenet/
 tar -jvxf aenet-2.0.3.tar.bz2
 patch -u -p1 -d aenet-2.0.3/ < aenet_lammps.patch
 cd aenet-2.0.3/src/
@@ -62,7 +62,7 @@ To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 ```
 After job done, please check lattice constant (lx) in log.lammps and log.lammps.g++_mm
 
-In in.aenet_mm(nve) the following two line activate the ANN potential:
+In in.aenet_mm(nve) the following two lines activate the ANN potential:
 ```
 pair_style      aenet
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe
