@@ -1,24 +1,23 @@
 # About this package
 
 This package contains the neural network (ANN) atomic potential module implemented in LAMMPS, patch of aenet for the LAMMPS library, and ANN parameter file of BCC iron.
-This package is distributed under the GNU General Public License,and there is no warranty.
-If you have any troubles and questions, feel free to contact package author:Hideki Mori (morih@cit.sangitan.ac.jp)
+This package is distributed under the GNU General Public License, and there is no warranty.
+If you have any troubles and questions, feel free to contact package author.
 
 # Installation
 
-0. This manual is only case of gnu g++, gfortran, and openmpi under linux OS.
-If you use intel compiler, replace gfortran to ifort
-
-1. Clone this package to your appropriate directory
+0. This manual explains only clean install case using gnu g++, gfortran, and openmpi under linux OS. 
+  
+1. Clone this package to your appropriate directory.
 ``` 
 git clone https://github.com/HidekiMori-CIT/aenet-lammps.git
 ```
 
-2. Download (and copy) LAMMPS and aenet package to current directory from:  
+2. Download (and copy) LAMMPS and aenet package to same directory of aenet-lammps from:  
 [LAMMPS](https://lammps.sandia.gov/) :lammps-stable.tar.gz, currently 3Mar20  
 [aenet](http://ann.atomistic.net/) :aenet-2.0.3.tar.bz2  
 
-3. Unpack the lammps package and copy this package and aenet-2.0.3.tar.bz2 to src and lib in lammps(-3Mar20) directory.
+3. Unpack the lammps package and copy aenet-lammps/USER-AENT and /aenet and aenet-2.0.3.tar.bz2 to /src and /lib in lammps(-3Mar20) directory.
 ```
 tar -xvzf lammps-stable.tar.gz
 cp -r ./aenet-lammps/USER-AENET/ ./lammps-3Mar20/src/
@@ -26,7 +25,7 @@ cp -r ./aenet-lammps/aenet/ ./lammps-3Mar20/lib/
 cp aenet-2.0.3.tar.bz2 lammps-3Mar20/lib/aenet/
 ```
 
-4. Patch and compile aenet library
+4. Patch and compile aenet library.
 ```
 cd lammps-3Mar20/lib/aenet/
 tar -jvxf aenet-2.0.3.tar.bz2
@@ -35,18 +34,19 @@ cd aenet-2.0.3/src/
 make -f makefiles/Makefile.gfortran_serial lib
 cd ../../
 ```
+note: If you use intel compiler, replace gfortran to ifort.  
 
 5. Check the below two files are created:  
 library of aenet: libaenet.a  
 linker of aenet and lammps: Makefile.lammps  
 
-6. Compile LAMMPS with aenet module
+6. Compile LAMMPS with aenet module.
 ```
 cd ../../src/
 make yes-user-aenet
 make mpi
 ```
-note: other compile option of LAMMPS, please see LAMMPS manual.
+note: Other compile option of LAMMPS, please see LAMMPS manual.
 
 # How to run LAMMPS with ANN potential
 
@@ -77,3 +77,6 @@ If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_st
 ```
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe 
 ```
+# Author & contact information
+Author: Hideki Mori, College of Industrial Technology, Japan  
+E-mail: morih@cit.sangitan.ac.jp
