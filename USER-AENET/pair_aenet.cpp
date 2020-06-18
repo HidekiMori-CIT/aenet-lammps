@@ -234,6 +234,8 @@ void PairAENET::coeff(int narg, char **arg)
           aenet_sfb_ver = 1;
        }else if (std::string(arg[2]).find("02") != std::string::npos){
           aenet_sfb_ver = 2;
+       }else if (std::string(arg[2]).find("03") != std::string::npos){
+          aenet_sfb_ver = 3;
        }else {
           aenet_sfb_ver = 0;
        }
