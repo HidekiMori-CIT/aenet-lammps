@@ -37,7 +37,7 @@ cd ../../
 note: If you use intel compiler, replace gfortran to ifort.  
 
 5. Check the below two files are created:  
-(1) libaenet.a: library of aenet
+(1) libaenet.a: library of aenet 
 (2) Makefile.lammps: linker of aenet and lammps  
 
 6. Compile LAMMPS with aenet module.
