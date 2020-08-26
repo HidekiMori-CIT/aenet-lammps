@@ -37,7 +37,7 @@ cd ../../
 note: If you use intel compiler, replace gfortran to ifort.  
 
 5. Check the below two files are created:  
-(a) libaenet.a: library of aenet.
+(a) libaenet.a: library of aenet  
 (b) Makefile.lammps: linker of aenet and lammps  
 
 6. Compile LAMMPS with aenet module.
@@ -82,19 +82,18 @@ Author: Hideki Mori, College of Industrial Technology, Japan
 E-mail: morih@cit.sangitan.ac.jp
 
 # Citing of this package
-Please use this bibtex,
-
-@article{mori2020neural,
-  title={Neural network atomic potential to investigate the dislocation dynamics in bcc iron},
-  author={Mori, Hideki and Ozaki, Taisuke},
-  journal={Physical Review Materials},
-  volume={4},
-  number={4},
-  pages={040601},
-  year={2020},
-  publisher={APS}
+Please use this bibtex,  
+@article{mori2020neural,  
+  title={Neural network atomic potential to investigate the dislocation dynamics in bcc iron},  
+  author={Mori, Hideki and Ozaki, Taisuke},  
+  journal={Physical Review Materials},  
+  volume={4},  
+  number={4},  
+  pages={040601},  
+  year={2020},  
+  publisher={APS}  
 }
 
 # Reference
-[1] N. Artrith and A. Urban, Comput. Mater. Sci. 114, 135 (2016).
+[1] N. Artrith and A. Urban, Comput. Mater. Sci. 114, 135 (2016).  
 [2] S. Plimpton, J. Comput. Phys. 117, 1 (1995).
