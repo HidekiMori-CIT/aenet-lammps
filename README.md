@@ -37,8 +37,8 @@ cd ../../
 note: If you use intel compiler, replace gfortran to ifort.  
 
 5. Check the below two files are created:  
-(1) libaenet.a: library of aenet 
-(2) Makefile.lammps: linker of aenet and lammps  
+(a) libaenet.a: library of aenet.
+(b) Makefile.lammps: linker of aenet and lammps  
 
 6. Compile LAMMPS with aenet module.
 ```
@@ -52,8 +52,8 @@ note: Other compile option of LAMMPS, please see LAMMPS manual.
 
 In ANN/Fe/ directory parameter file and example input file for LAMMPS  
 Parameter file of ANN potential for BCC iron : Fe.10tw-10tw.ann  
-(1) in.aenet_mm: example input file for LAMMPS, lattice optimization of BCC iron  
-(2) in.aenet_nve: example input file for LAMMPS, run nve MD of BCC iron  
+(a) in.aenet_mm: example input file for LAMMPS, lattice optimization of BCC iron  
+(b) in.aenet_nve: example input file for LAMMPS, run nve MD of BCC iron  
 
 To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 ```
@@ -83,6 +83,7 @@ E-mail: morih@cit.sangitan.ac.jp
 
 # Citing of this package
 Please use this bibtex,
+
 @article{mori2020neural,
   title={Neural network atomic potential to investigate the dislocation dynamics in bcc iron},
   author={Mori, Hideki and Ozaki, Taisuke},
@@ -93,3 +94,7 @@ Please use this bibtex,
   year={2020},
   publisher={APS}
 }
+
+# Reference
+[1] N. Artrith and A. Urban, Comput. Mater. Sci. 114, 135 (2016).
+[2] S. Plimpton, J. Comput. Phys. 117, 1 (1995).
