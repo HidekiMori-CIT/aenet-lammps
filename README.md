@@ -51,9 +51,9 @@ note: Other compile option of LAMMPS, please see LAMMPS manual.
 # How to run LAMMPS with ANN potential
 
 In ANN/Fe/ directory parameter file and example input file for LAMMPS  
-Parameter file of ANN potential for BCC iron : Fe.10tw-10tw.ann  
-(a) in.aenet_mm: example input file for LAMMPS, lattice optimization of BCC iron  
-(b) in.aenet_nve: example input file for LAMMPS, run nve MD of BCC iron  
+(a) Fe.10tw-10tw.ann: parameter file of ANN potential for BCC iron   
+(b) in.aenet_mm: example input file for LAMMPS, lattice optimization of BCC iron  
+(c) in.aenet_nve: example input file for LAMMPS, run nve MD of BCC iron  
 
 To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 ```
