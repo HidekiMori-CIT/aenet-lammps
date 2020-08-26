@@ -1,6 +1,6 @@
 # About this package
 
-This package contains the neural network (ANN) atomic potential module implemented in LAMMPS, patch of aenet for the LAMMPS library, and ANN parameter file of BCC iron.
+This package contains the neural network (ANN) atomic potential module implemented in LAMMPS [1], patch of aenet [2] for the LAMMPS library, and ANN parameter file of BCC iron.
 This package is distributed under the GNU General Public License, and there is no warranty.
 If you have any troubles and questions, feel free to contact package author.
 
@@ -17,7 +17,7 @@ git clone https://github.com/HidekiMori-CIT/aenet-lammps.git
 [LAMMPS](https://lammps.sandia.gov/) :lammps-stable.tar.gz, currently 3Mar20  
 [aenet](http://ann.atomistic.net/) :aenet-2.0.3.tar.bz2  
 
-3. Unpack the lammps package and copy aenet-lammps/USER-AENT and /aenet and aenet-2.0.3.tar.bz2 to /src and /lib in lammps(-3Mar20) directory.
+3. Unpack the lammps package and copy aenet-lammps/USER-AENT, aenet-lammps/aenet, and aenet-2.0.3.tar.bz2 to /src and /lib in lammps(-3Mar20) directory.
 ```
 tar -xvzf lammps-stable.tar.gz
 cp -r ./aenet-lammps/USER-AENET/ ./lammps-3Mar20/src/
@@ -77,9 +77,6 @@ If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_st
 ```
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe 
 ```
-# Author & contact information
-Author: Hideki Mori, College of Industrial Technology, Japan  
-E-mail: morih@cit.sangitan.ac.jp
 
 # Citing of this package
 Please use this bibtex,  
@@ -95,5 +92,10 @@ Please use this bibtex,
 }
 
 # Reference
-[1] N. Artrith and A. Urban, Comput. Mater. Sci. 114, 135 (2016).  
-[2] S. Plimpton, J. Comput. Phys. 117, 1 (1995).
+[1] S. Plimpton, J. Comput. Phys. 117, 1 (1995).  
+[2] N. Artrith and A. Urban, Comput. Mater. Sci. 114, 135 (2016).  
+
+# Author & contact information
+Author: Hideki Mori, College of Industrial Technology, Japan  
+E-mail: morih@cit.sangitan.ac.jp
+
