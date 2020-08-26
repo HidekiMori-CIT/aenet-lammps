@@ -78,7 +78,7 @@ If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_st
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe 
 ```
 
-# Citing of this package
+# Citing of this package and ANN potential
 Please use this bibtex,  
 @article{mori2020neural,  
   title={Neural network atomic potential to investigate the dislocation dynamics in bcc iron},  
