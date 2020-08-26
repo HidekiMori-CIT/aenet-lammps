@@ -17,7 +17,7 @@ git clone https://github.com/HidekiMori-CIT/aenet-lammps.git
 [LAMMPS](https://lammps.sandia.gov/) :lammps-stable.tar.gz, currently 3Mar20  
 [aenet](http://ann.atomistic.net/) :aenet-2.0.3.tar.bz2  
 
-3. Unpack the lammps package and copy aenet-lammps/USER-AENT, aenet-lammps/aenet, and aenet-2.0.3.tar.bz2 to /src and /lib in lammps(-3Mar20) directory.
+3. Unpack the lammps package and copy USER-AENET/ and aenet/ in aenet-lammps/ to src/ and lib/ in lammps(-3Mar20), respectively, and copy aenet-2.0.3.tar.bz2 to lib/aenet/ in lammps(-3Mar20) directory.
 ```
 tar -xvzf lammps-stable.tar.gz
 cp -r ./aenet-lammps/USER-AENET/ ./lammps-3Mar20/src/
