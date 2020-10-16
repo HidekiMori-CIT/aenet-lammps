@@ -71,7 +71,7 @@ The pair_style line might be always same.
 In pair_coeff line, v01 means to use our original version. 
 **_If you chose v00, you can use parameter file from original aenet package._**
 The Fe between v01 and 10tw-10tw.ann set element(s).
-The term:10tw-10tw.ann set name of parameter file, in this case, file name is set as Fe.10tw-10tw.ann.
+The term:10tw-10tw.ann is **_file mask_** for name of parameter file, in this case, file name is set as Fe.10tw-10tw.ann.
 The final Fe assign elements to atom type.
 If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_style line as follow:  
 ```
