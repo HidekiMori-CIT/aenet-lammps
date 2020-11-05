@@ -187,6 +187,9 @@ void PairAENET::coeff(int narg, char **arg)
   int stat;
   int itype;
   char netFile[128];
+  
+  std::string wc = "**";
+  int len = wc.length();
 
   if (narg < 6) error->all(FLERR,"Incorrect args for pair coefficients");
   if (!allocated) allocate();
@@ -215,31 +218,19 @@ void PairAENET::coeff(int narg, char **arg)
   }
   
   aenet_init(nelements, &elements[0], &stat);
-  if (stat != 0){
-	aenet_final(&stat);
-	if(stat != 0)error->all(FLERR,"Error: aenet initialization failed");
-  	aenet_init(nelements, &elements[0], &stat);
-	if(stat != 0)error->all(FLERR,"Error: aenet initialization failed");
-  }
+  if(stat != 0)error->all(FLERR,"Error: aenet initialization failed");
+  
+  aenet_sfb_ver = atoi((std::string(arg[2])).substr(1).c_str());
+  std::string file_pas_name = std::string(arg[3+nelements]);
   
   for (i = 0; i < nelements; i++){
     itype = i + 1;
-    if (std::string(arg[2]).find("nn") != std::string::npos || 
-        std::string(arg[2]).find("NN") != std::string::npos){
-       snprintf(netFile, 128, "%s.%s.%s", elements[i], arg[3+nelements],arg[2]);
-       aenet_sfb_ver = 0;
-    }else {
-       snprintf(netFile, 128, "%s.%s", elements[i], arg[3+nelements]);
-       if (std::string(arg[2]).find("01") != std::string::npos){
-          aenet_sfb_ver = 1;
-       }else if (std::string(arg[2]).find("02") != std::string::npos){
-          aenet_sfb_ver = 2;
-       }else if (std::string(arg[2]).find("03") != std::string::npos){
-          aenet_sfb_ver = 3;
-       }else {
-          aenet_sfb_ver = 0;
-       }
-    }
+    std::string ele_str = std::string(elements[i]);
+    if (file_pas_name.find(wc) != std::string::npos) {
+      file_pas_name.replace(file_pas_name.find(wc),len,ele_str);
+    } else 
+      file_pas_name = ele_str+"."+file_pas_name;
+    snprintf(netFile, 128, "%-s", file_pas_name.c_str());
     aenet_load_potential(itype, netFile, &stat);
     if (stat != 0)error->all(FLERR,"Error: could not load ANN potentials");
   }
