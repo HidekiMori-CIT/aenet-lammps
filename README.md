@@ -1,3 +1,7 @@
+# Update
+2020/11/05 add the patch file for aenet-2.0.4 and slightly modify the pair_aenet.cpp
+
+
 # About this package
 
 This package provides the interface module between aenet [1] and LAMMPS [2], patch of aenet for the LAMMPS library, and Artificial Neural network (ANN) potential parameter file of BCC iron.
@@ -29,12 +33,13 @@ cp aenet-2.0.3.tar.bz2 lammps-3Mar20/lib/aenet/
 ```
 cd lammps-3Mar20/lib/aenet/
 tar -jvxf aenet-2.0.3.tar.bz2
-patch -u -p1 -d aenet-2.0.3/ < aenet_lammps.patch
+patch -u -p1 -d aenet-2.0.3/ < aenet-2.0.3_lammps.patch
 cd aenet-2.0.3/src/
 make -f makefiles/Makefile.gfortran_serial lib
 cd ../../
 ```
 note: If you use intel compiler, replace gfortran to ifort.  
+note: if you want to use aenet-2.0.4, please use aenet-2.0.4_lammps.patch
 
 5. Check the below two files are created:  
 (a) libaenet.a: library of aenet  
