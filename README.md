@@ -1,5 +1,5 @@
 # Update
-2020/11/05: add the patch file for aenet-2.0.4 and slightly modify the pair_aenet.cpp
+2020/11/05: Add the patch file for aenet-2.0.4 and slightly modify the pair_aenet.cpp
 
 
 # About this package
