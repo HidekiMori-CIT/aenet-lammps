@@ -39,7 +39,7 @@ make -f makefiles/Makefile.gfortran_serial lib
 cd ../../
 ```
 note: If you use intel compiler, replace gfortran to ifort.  
-note: if you want to use aenet-2.0.4, please use aenet-2.0.4_lammps.patch
+note: if you want to use aenet-2.0.4, please use (replace) aenet-2.0.4_lammps.patch.
 
 5. Check the below two files are created:  
 (a) libaenet.a: library of aenet  
