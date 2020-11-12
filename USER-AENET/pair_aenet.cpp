@@ -221,16 +221,16 @@ void PairAENET::coeff(int narg, char **arg)
   if(stat != 0)error->all(FLERR,"Error: aenet initialization failed");
   
   aenet_sfb_ver = atoi((std::string(arg[2])).substr(1).c_str());
-  std::string file_pas_name = std::string(arg[3+nelements]);
-  
+  std::string file_mask = std::string(arg[3+nelements]);
   for (i = 0; i < nelements; i++){
     itype = i + 1;
     std::string ele_str = std::string(elements[i]);
-    if (file_pas_name.find(wc) != std::string::npos) {
-      file_pas_name.replace(file_pas_name.find(wc),len,ele_str);
+    std::string ith_file_name = file_mask;
+    if (ith_file_name.find(wc) != std::string::npos) {
+      ith_file_name.replace(ith_file_name.find(wc),len,ele_str);
     } else 
-      file_pas_name = ele_str+"."+file_pas_name;
-    snprintf(netFile, 128, "%-s", file_pas_name.c_str());
+      ith_file_name = ele_str+"."+ith_file_name;
+    snprintf(netFile, 128, "%-s", ith_file_name.c_str());
     aenet_load_potential(itype, netFile, &stat);
     if (stat != 0)error->all(FLERR,"Error: could not load ANN potentials");
   }
