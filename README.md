@@ -1,6 +1,6 @@
 # Update
-2020/11/05: Add the patch file for aenet-2.0.4 and slightly modify the pair_aenet.cpp.
-
+2020/11/05: Add the patch file for aenet-2.0.4 and slightly modify the pair_aenet.cpp.  
+2020/11/12: Update the LAMMPS version.
 
 # About this package
 
@@ -18,20 +18,20 @@ git clone https://github.com/HidekiMori-CIT/aenet-lammps.git
 ```
 
 2. Download (and copy) LAMMPS and aenet package to same directory of aenet-lammps from:  
-[LAMMPS](https://lammps.sandia.gov/) :lammps-stable.tar.gz, currently 3Mar20  
+[LAMMPS](https://lammps.sandia.gov/) :lammps-stable.tar.gz, currently 29Oct20  
 [aenet](http://ann.atomistic.net/) :aenet-2.0.3.tar.bz2  
 
-3. Unpack the lammps package and copy USER-AENET/ and aenet/ in aenet-lammps/ to src/ and lib/ in lammps(-3Mar20), respectively, and copy aenet-2.0.3.tar.bz2 to lib/aenet/ in lammps(-3Mar20) directory.
+3. Unpack the lammps package and copy USER-AENET/ and aenet/ in aenet-lammps/ to src/ and lib/ in lammps(-29Oct20), respectively, and copy aenet-2.0.3.tar.bz2 to lib/aenet/ in lammps(-29Oct20) directory.
 ```
 tar -xvzf lammps-stable.tar.gz
-cp -r ./aenet-lammps/USER-AENET/ ./lammps-3Mar20/src/
-cp -r ./aenet-lammps/aenet/ ./lammps-3Mar20/lib/
-cp aenet-2.0.3.tar.bz2 lammps-3Mar20/lib/aenet/
+cp -r ./aenet-lammps/USER-AENET/ ./lammps-29Oct20/src/
+cp -r ./aenet-lammps/aenet/ ./lammps-29Oct20/lib/
+cp aenet-2.0.3.tar.bz2 lammps-29Oct20/lib/aenet/
 ```
 
 4. Patch and compile aenet library.
 ```
-cd lammps-3Mar20/lib/aenet/
+cd lammps-29Oct20/lib/aenet/
 tar -jvxf aenet-2.0.3.tar.bz2
 patch -u -p1 -d aenet-2.0.3/ < aenet-2.0.3_lammps.patch
 cd aenet-2.0.3/src/
@@ -62,7 +62,7 @@ In ANN/Fe/ directory parameter file and example input file for LAMMPS
 
 To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 ```
-../../../lammps-3Mar20/src/lmp_mpi -i in.aenet_mm
+../../../lammps-29Oct20/src/lmp_mpi -i in.aenet_mm
 ```
 After job done, please check lattice constant (lx) in log.lammps and log.lammps.g++_mm
 
