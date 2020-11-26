@@ -44,7 +44,9 @@ PairAENET::~PairAENET()
   int i, stat; 
 
   aenet_final(&stat);
-  if (stat != 0)error->all(FLERR,"Error: aenet finalization failed");
+  if (stat != 0){
+	  error->all(FLERR,"Error: aenet finalization failed");
+  }
   
   for (i = 0; i < nelements; i++) delete [] elements[i];
   delete [] elements;
@@ -187,6 +189,7 @@ void PairAENET::coeff(int narg, char **arg)
   int stat;
   int itype;
   char netFile[128];
+  char Error_message[256];
   
   std::string wc = "**";
   int len = wc.length();
@@ -218,7 +221,10 @@ void PairAENET::coeff(int narg, char **arg)
   }
   
   aenet_init(nelements, &elements[0], &stat);
-  if(stat != 0)error->all(FLERR,"Error: aenet initialization failed");
+  if(stat != 0){
+          snprintf(Error_message, 256, "Aenet initialization failed, error_ID from aenet (stat) is %2d",stat);
+	  error->all(FLERR,Error_message);
+  }
   
   aenet_sfb_ver = atoi((std::string(arg[2])).substr(1).c_str());
   std::string file_mask = std::string(arg[3+nelements]);
@@ -232,7 +238,10 @@ void PairAENET::coeff(int narg, char **arg)
       ith_file_name = ele_str+"."+ith_file_name;
     snprintf(netFile, 128, "%-s", ith_file_name.c_str());
     aenet_load_potential(itype, netFile, &stat);
-    if (stat != 0)error->all(FLERR,"Error: could not load ANN potentials");
+    if (stat != 0){
+            snprintf(Error_message, 256, "Could not load %-s, error_ID from aenet (stat) is%2d", ith_file_name.c_str(),stat);
+	    error->all(FLERR,Error_message);
+    }
   }
 
   // read args that map atom types to ANN elements
