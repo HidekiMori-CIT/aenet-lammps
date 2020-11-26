@@ -2,6 +2,7 @@
 2020/11/05: Add the patch file for aenet-2.0.4 and slightly modify the pair_aenet.cpp.  
 2020/11/12: Update the LAMMPS version in README (this file).  
 2020/11/12: Bug fix of pair_aenet.cpp for binary system.
+2020/11/26: Slightly modify the pair_aenet.cpp to output detail error message.  
 
 # About this package
 
