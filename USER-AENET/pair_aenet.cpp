@@ -41,11 +41,13 @@ PairAENET::PairAENET(LAMMPS *lmp) : Pair(lmp)
 PairAENET::~PairAENET()
 {
   //if(copymode) return;
-  int i, stat; 
+  int i, stat;
+  char Error_message[256];
 
   aenet_final(&stat);
   if (stat != 0){
-	  error->all(FLERR,"Error: aenet finalization failed");
+    snprintf(Error_message, 256, "Aenet finalization failed, error_ID from aenet (stat) is %2d",stat);
+    error->all(FLERR,Error_message);
   }
   
   for (i = 0; i < nelements; i++) delete [] elements[i];
