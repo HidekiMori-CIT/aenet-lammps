@@ -1,0 +1,23 @@
+atom_style      atomic
+units           metal
+boundary        p p p
+
+read_data      TiO2.lmp
+
+pair_style      aenet
+pair_coeff      * * v00 Ti O 15t-15t.nn Ti O
+
+neighbor        0.5 bin
+
+thermo_style    custom step etotal pe ke temp press
+thermo          50
+
+reset_timestep  0
+timestep        0.0005
+
+dump            d1 all cfg 100 run*.cfg mass type xs ys zs
+dump_modify     d1 element Ti O
+
+fix             f1 all nve
+run             500
+
