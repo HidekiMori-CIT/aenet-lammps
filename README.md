@@ -3,7 +3,7 @@
 2020/11/12: Update the LAMMPS version in README (this file).  
 2020/11/12: Bug fix of pair_aenet.cpp for binary system.  
 2020/11/26: Slightly modify the pair_aenet.cpp to output detail error message.  
-2020/11/29: Add the TiO2 directory which contains example potential files and input file for LAMMPS.
+2020/11/29: Add the TiO2 directory which contains example potential files and LAMMPS input file for binary system.
 
 # About this package
 
