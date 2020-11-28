@@ -2,7 +2,7 @@ atom_style      atomic
 units           metal
 boundary        p p p
 
-read_data      in_TiO2.lmp
+read_data       TiO2.lmp
 
 pair_style      aenet
 pair_coeff      * * v00 Ti O 15t-15t.nn Ti O
