@@ -42,7 +42,7 @@ make -f makefiles/Makefile.gfortran_serial lib
 cd ../../
 ```
 note: If you use intel compiler, replace gfortran to ifort.  
-note: if you want to use aenet-2.0.4, please use (replace) aenet-2.0.4_lammps.patch.(2020/11/05)  
+note: if you use aenet-2.0.4, please use (replace) aenet-2.0.4_lammps.patch.(2020/11/05)  
 
 5. Check the below two files are created:  
 (a) libaenet.a: library of aenet  
@@ -54,7 +54,7 @@ cd ../../src/
 make yes-user-aenet
 make mpi
 ```
-note: Other compile option of LAMMPS, please see LAMMPS manual.
+note: If you use intel compiler, replace mpi to icc_openmpi. Other compile option of LAMMPS, please see LAMMPS manual.
 
 # How to run LAMMPS with ANN potential
 
