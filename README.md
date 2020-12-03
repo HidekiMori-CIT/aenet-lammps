@@ -85,6 +85,7 @@ If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_st
 ```
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe 
 ```
+note: Please see TiO2 directory for binary system.
 
 # Citing of this package and ANN potential
 Please use this bibtex,  
