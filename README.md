@@ -107,5 +107,5 @@ Please use this bibtex,
 
 # Author & contact information
 Author: Hideki Mori, College of Industrial Technology, Japan  
-E-mail: morih@cit.sangitan.ac.jp
+E-mail: morih@cit.sangitan.ac.jp or morih.cit.01@gmail.com
 
