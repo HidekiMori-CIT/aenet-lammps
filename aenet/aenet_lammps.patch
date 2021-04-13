@@ -1,7 +1,53 @@
-diff -u -r aenet-2.0.3/src/ext/feedforward.f90 aenet/src/ext/feedforward.f90
---- aenet-2.0.3/src/ext/feedforward.f90	2018-06-25 23:50:01.000000000 +0900
-+++ aenet/src/ext/feedforward.f90	2020-05-29 15:52:17.875726683 +0900
-@@ -429,6 +429,10 @@
+diff -u -r aenet/src/Makefile.inc aenet_extend/src/Makefile.inc
+--- aenet/src/Makefile.inc	2021-01-27 18:16:31.395003372 +0900
++++ aenet_extend/src/Makefile.inc	2021-01-27 18:25:21.922985898 +0900
+@@ -64,7 +64,7 @@
+ generate : $(TARGET1)
+ train    : $(TARGET2)
+ predict  : $(TARGET3)
+-lib      : libaenet.a libaenet.so
++lib      : ../../libaenet.a libaenet.so
+ 
+ %.o : %.f90
+ 	$(FC) $(FCFLAGS) $< -o $*.o
+@@ -90,15 +90,19 @@
+ $(BIN)%.x : %.F90 $(OBJECTS) Makefile.inc
+ 	$(LD) $(LDFLAGS) -o $@-$(version)-$(SUFFIX) $< $(OBJECTS) $(LIB) $(NUMLIB)
+ 
+-libaenet.a : $(OBJECTS) Makefile.inc
++../../libaenet.a : $(OBJECTS) Makefile.inc
+ 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
++	@echo "aenet_SYSINC  =" > ../../Makefile.lammps
++	@echo "aenet_SYSLIB  = $(MY_SYSLIB)" >>../../Makefile.lammps
++	@echo "aenet_SYSPATH =" >> ../../Makefile.lammps
+ 
+ libaenet.so : $(PICOBJECTS) Makefile.inc
+ 	$(LIBLD) $(LIBFLAGS) $(PICOBJECTS) $(LIBLIB) -o $@
+ 
+ veryclean: clean
+ 	for f in $(TARGETS); do rm -f $$f-*; done
+-	if [ -e libaenet.a ]; then rm -f libaenet.a; fi
++	if [ -e ../../libaenet.a ]; then rm -f ../../libaenet.a; fi
++	if [ -e ../../Makefile.lammps ]; then rm -f ../../Makefile.lammps; fi
+ 	if [ -e libaenet.so ]; then rm -f libaenet.so; fi
+ 	if [ -e TAGS ]; then rm -f TAGS; fi
+ 	for f in $(TESTS); do rm -f $$f-*; done
+diff -u -r aenet/src/aeio.f90 aenet_extend/src/aeio.f90
+--- aenet/src/aeio.f90	2021-01-27 18:16:31.395003372 +0900
++++ aenet_extend/src/aeio.f90	2021-01-27 18:17:52.915000687 +0900
+@@ -56,7 +56,7 @@
+ 
+   integer, parameter, public :: LINELEN = 1024
+   integer, parameter, public :: PATHLEN = 1024
+-  integer, parameter, public :: TYPELEN = 2
++  integer, parameter, public :: TYPELEN = 4
+   integer, parameter, public :: STDIN   = 5
+   integer, parameter, public :: STDOUT  = 6
+   integer, parameter, public :: STDERR  = 0
+diff -u -r aenet/src/ext/feedforward.f90 aenet_extend/src/ext/feedforward.f90
+--- aenet/src/ext/feedforward.f90	2021-01-27 18:16:31.399003372 +0900
++++ aenet_extend/src/ext/feedforward.f90	2021-01-27 18:17:52.919000687 +0900
+@@ -436,6 +436,10 @@
            fname = 'scaled hyperbolic tangent (mtanh)'
         case(4)
            fname = 'scaled hyperbolic tangent + linear twisting (twist)'
@@ -12,7 +58,7 @@ diff -u -r aenet-2.0.3/src/ext/feedforward.f90 aenet/src/ext/feedforward.f90
         end select
         write(*,'(5x,I3," : ",I5,2x,A)') ilayer, net%nnodes(ilayer), trim(fname)
      end do
-@@ -586,7 +590,7 @@
+@@ -593,7 +597,7 @@
      integer,                                  intent(in)    :: ny
      double precision, dimension(net%nvalues), intent(out)   :: values
      double precision, dimension(net%nvalues), intent(out)   :: derivs
@@ -21,7 +67,7 @@ diff -u -r aenet-2.0.3/src/ext/feedforward.f90 aenet/src/ext/feedforward.f90
  
      integer, dimension(2) :: Wshape
      integer               :: iw1, iw2
-@@ -896,6 +900,10 @@
+@@ -903,6 +907,10 @@
         net%f_a(ilayer) = 3
      case('twist','w')
         net%f_a(ilayer) = 4
@@ -32,7 +78,7 @@ diff -u -r aenet-2.0.3/src/ext/feedforward.f90 aenet/src/ext/feedforward.f90
      case default
         write(0,*) "Error: invalid function type in `change_activation': ", &
                    trim(ftype)
-@@ -935,6 +943,11 @@
+@@ -942,6 +950,11 @@
      double precision, parameter :: a = 1.7159d0
      double precision, parameter :: b = 0.666666666666667d0
      double precision, parameter :: c = 0.1d0
@@ -44,7 +90,7 @@ diff -u -r aenet-2.0.3/src/ext/feedforward.f90 aenet/src/ext/feedforward.f90
  
      select case(t)
      case(0)
-@@ -954,6 +967,16 @@
+@@ -961,6 +974,16 @@
         tanhbx = tanh(b*x)
         y  = a*tanhbx + c*x
         dy = a*(1.0d0 - tanhbx*tanhbx)*b + c
@@ -61,10 +107,10 @@ diff -u -r aenet-2.0.3/src/ext/feedforward.f90 aenet/src/ext/feedforward.f90
      case default
         y  = 0.0d0
         dy = 0.0d0
-diff -u -r aenet-2.0.3/src/ext/sfbasis.f90 aenet/src/ext/sfbasis.f90
---- aenet-2.0.3/src/ext/sfbasis.f90	2018-06-25 23:50:01.000000000 +0900
-+++ aenet/src/ext/sfbasis.f90	2020-05-29 16:16:15.419676202 +0900
-@@ -19,6 +19,9 @@
+diff -u -r aenet/src/ext/sfbasis.f90 aenet_extend/src/ext/sfbasis.f90
+--- aenet/src/ext/sfbasis.f90	2021-01-27 18:16:31.399003372 +0900
++++ aenet_extend/src/ext/sfbasis.f90	2021-01-27 18:17:52.919000687 +0900
+@@ -26,6 +26,9 @@
  
  module sfbasis
  
@@ -74,14 +120,23 @@ diff -u -r aenet-2.0.3/src/ext/sfbasis.f90 aenet/src/ext/sfbasis.f90
    use io, only: io_unit
  
    use chebyshev, only: chebyshev_polynomial, &
-@@ -66,6 +69,14 @@
+@@ -63,7 +66,7 @@
+      integer                                       :: N
+      integer                                       :: num_types
+      logical                                       :: multi
+-     character(len=2), dimension(:),   allocatable :: atom_types
++     character(len=4), dimension(:),   allocatable :: atom_types
+      integer,          dimension(:),   allocatable :: typeid
+      double precision, dimension(:),   allocatable :: typespin
+      integer                                       :: num_values
+@@ -73,6 +76,14 @@
    double precision, parameter, private :: PI_INV = 1.0d0/PI
    double precision, parameter, private :: PI2    = 2.0d0*PI
    double precision, parameter, private :: EPS    = 1.0d-12
 +  
-+  logical                              :: switch_sfb = .false.
-+  integer                              :: switch_cff = 0
-+  
++  integer                              :: switch_sfb = 3
++  integer                              :: kfc_r = 0
++  integer                              :: kfc_a = 0
 +  double precision                     :: r_h = 1.5d0
 +  double precision                     :: a_h = 1.5d0
 +  
@@ -89,256 +144,212 @@ diff -u -r aenet-2.0.3/src/ext/sfbasis.f90 aenet/src/ext/sfbasis.f90
  
  contains
  
-@@ -139,6 +150,25 @@
+@@ -146,6 +157,37 @@
         s = s + 1
      end do
  
 +    select case(aenet_sfb_ver)
++    case(-1)
++       switch_sfb = -1
++       kfc_r  = 0
++       kfc_a  = 0
++    case(0)
++       switch_sfb = 0
++       kfc_r  = 0
++       kfc_a  = 0
 +    case(1)
-+       switch_sfb = .true.
-+       switch_cff = 0
++       switch_sfb = 1
++       kfc_r  = 0
++       kfc_a  = 0
 +    case(2)
-+       switch_sfb = .true.
-+       switch_cff = 1
++       switch_sfb = 1
++       kfc_r = 1
++       kfc_a = 1
 +       r_h = 3.d0
 +       a_h = 5.d0
 +    case(3)
-+       switch_sfb = .true.
-+       switch_cff = 2
++       switch_sfb = 1
++       kfc_r = 1
++       kfc_a = 2
 +       r_h = 3.d0
 +       a_h = 1.25d0
 +    case default
-+       switch_sfb = .false.
-+       switch_cff = 0
++       switch_sfb = 0
++       kfc_r  = 0
++       kfc_a  = 0
 +    end select
 +    
      sfb%initialized = .true.
  
    end function new_SFBasis
-@@ -719,7 +749,7 @@
+@@ -716,37 +758,59 @@
+   !====================================================================!
+ 
+ 
+-  function sfb_fc(Rij, Rc) result(fc)
++  function sfb_fc(Rij, Rc, kfc, h) result(fc)
+ 
+     implicit none
+ 
+-    double precision, intent(in) :: Rij, Rc
++    double precision, intent(in) :: Rij, Rc, h
++    integer,intent(in)           :: kfc
+     double precision             :: fc
++    
++    double precision :: x
+ 
      if (Rij >= Rc) then
         fc  = 0.0d0
      else
 -       fc  =  0.5d0*(cos(PI/Rc*Rij) + 1.0d0)
-+       fc  =  0.5d0*(cos(PI*Rij/Rc) + 1.0d0)
++       select case (kfc)
++       case(0)
++          fc  =  0.5d0*(cos(PI/Rc*Rij) + 1.0d0)
++       case(1)
++          fc  = 1.d0 + h*(Rij/Rc)**(h+1) - (h+1)*(Rij/Rc)**(h)
++       case(2)
++          x  = (Rij - Rc)/h
++          fc  = x**2/(1+x**2)
++       end select
      end if
  
    end function sfb_fc
-@@ -747,6 +777,88 @@
  
-   !====================================================================!
-   !                                                                    !
-+  !               new cutoff function                                  !
-+  !                                                                    !
-+  !====================================================================!
-+  
-+  
-+  function new_sfb_fcr(Rij, Rc, g) result(fc)
-+
-+    implicit none
-+
-+    double precision, intent(in) :: Rij, Rc
-+    double precision, intent(in) :: g
-+    double precision             :: fc
-+
-+    if (Rij >= Rc) then
-+       fc  = 0.0d0
-+    else
-+       fc  = 1.d0 + g*(Rij/Rc)**(g+1) - (g+1)*(Rij/Rc)**(g)
-+    end if
-+
-+  end function new_sfb_fcr
-+
-+  !--------------------------------------------------------------------!
-+
-+  function new_sfb_fcr_d1(Rij, Rc, g) result(dfc)
-+
-+    implicit none
-+
-+    double precision, intent(in) :: Rij, Rc
-+    double precision, intent(in) :: g
-+    double precision             :: dfc
-+
-+    if (Rij >= Rc) then
-+       dfc = 0.0d0
-+    else
-+       dfc = (g*(g+1)*(Rij/Rc)**(g) - (g+1)*g*(Rij/Rc)**(g-1))/Rc
-+    end if
-+
-+  end function new_sfb_fcr_d1
-+
-+  !--------------------------------------------------------------------!
-+
-+  function new_sfb_fca(Rij, Rc, h) result(fc)
-+
-+    implicit none
-+
-+    double precision, intent(in) :: Rij, Rc
-+    double precision, intent(in) :: h
-+    double precision             :: fc
-+    double precision             :: x
-+
-+    if (Rij >= Rc) then
-+       fc  = 0.0d0
-+    else
-+       x  = (Rij - Rc)/h
-+       fc  = x**2/(1+x**2)
-+    end if
-+
-+  end function new_sfb_fca
-+
-+  !--------------------------------------------------------------------!
-+
-+  function new_sfb_fca_d1(Rij, Rc, h) result(dfc)
-+
-+    implicit none
-+
-+    double precision, intent(in) :: Rij, Rc
-+    double precision, intent(in) :: h
-+    double precision             :: dfc
-+    double precision             :: x
-+
-+    if (Rij >= Rc) then
-+       dfc = 0.0d0
-+    else
-+       x  = (Rij - Rc)/h
-+       dfc = 2*x/(1+x**2)**2/h
-+    end if
-+
-+  end function new_sfb_fca_d1
-+
-+
-+  !====================================================================!
-+  !                                                                    !
-   !                      generic basis functions                       !
-   !                                                                    !
-   !====================================================================!
-@@ -769,13 +881,21 @@
+   !--------------------------------------------------------------------!
+ 
+-  function sfb_fc_d1(Rij, Rc) result(dfc)
++  function sfb_fc_d1(Rij, Rc, kfc, h) result(dfc)
+ 
+     implicit none
+ 
+-    double precision, intent(in) :: Rij, Rc
++    double precision, intent(in) :: Rij, Rc, h
++    integer,intent(in)           :: kfc
+     double precision             :: dfc
+-
++    
++    double precision :: x
+     double precision :: a
+ 
+     if (Rij >= Rc) then
+        dfc = 0.0d0
+     else
+-       a = PI/Rc
+-       dfc = -0.5d0*a*sin(a*Rij)
++       select case (kfc)
++       case(0)
++          a = PI/Rc
++          dfc = -0.5d0*a*sin(a*Rij)
++       case(1)
++          dfc = (h*(h+1)*(Rij/Rc)**(h) - (h+1)*h*(Rij/Rc)**(h-1))/Rc
++       case(2)
++          x  = (Rij - Rc)/h
++          dfc = 2*x/(1+x**2)**2/h
++       end select
++       
+     end if
+ 
+   end function sfb_fc_d1
+@@ -776,13 +840,13 @@
  
      call sfb_assert_init(sfb)
  
 -    w_ij = sfb_fc(d_ij, sfb%r_Rc)
-+    if(switch_cff == 0)then
-+       w_ij = sfb_fc(d_ij, sfb%r_Rc)
-+    else
-+       w_ij = new_sfb_fcr(d_ij, sfb%r_Rc, r_h)
-+    end if
++    w_ij = sfb_fc(d_ij, sfb%r_Rc,kfc_r,r_h)
      f = chebyshev_polynomial(d_ij, 0.0d0, sfb%r_Rc, sfb%r_order)
  
      values(1:sfb%r_N) = w_ij*f(1:sfb%r_N)
  
      if (present(deriv_i) .and. present(deriv_j)) then
 -       dw_ij = sfb_fc_d1(d_ij, sfb%r_Rc)
-+       if(switch_cff == 0)then
-+          dw_ij = sfb_fc_d1(d_ij, sfb%r_Rc)          
-+       else
-+          dw_ij = new_sfb_fcr_d1(d_ij, sfb%r_Rc, r_h)
-+       end if
++       dw_ij = sfb_fc_d1(d_ij, sfb%r_Rc, kfc_r, r_h)          
         df = chebyshev_polynomial_d1(d_ij, 0.0d0, sfb%r_Rc, sfb%r_order)
         forall (i=1:sfb%r_N)
            deriv_i(:,i) = -R_ij/d_ij*(dw_ij*f(i) + w_ij*df(i))
-@@ -808,20 +928,55 @@
-     double precision, dimension(3)       :: di_cos_ikj, dj_cos_ikj, dk_cos_ikj
+@@ -816,20 +880,36 @@
      double precision, dimension(3)       :: di_w_ijk, dj_w_ijk, dk_w_ijk
      integer                              :: i
-+    
+ 
+-    call sfb_assert_init(sfb)
 +    double precision                     :: h_cos
  
-     call sfb_assert_init(sfb)
--
 -    fc_j = sfb_fc(d_ij, sfb%a_Rc)
 -    fc_k = sfb_fc(d_ik, sfb%a_Rc)
++    call sfb_assert_init(sfb)
 +    
-+    if(switch_cff == 0)then
-+       fc_j = sfb_fc(d_ij, sfb%a_Rc)
-+       fc_k = sfb_fc(d_ik, sfb%a_Rc)
-+    else if(switch_cff == 1)then
-+       fc_j = new_sfb_fcr(d_ij, sfb%a_Rc, a_h)
-+       fc_k = new_sfb_fcr(d_ik, sfb%a_Rc, a_h)
-+    else if(switch_cff == 2)then
-+       fc_j = new_sfb_fca(d_ij, sfb%a_Rc, a_h)
-+       fc_k = new_sfb_fca(d_ik, sfb%a_Rc, a_h)
-+    else
-+       
-+    end if
++    fc_j = sfb_fc(d_ij, sfb%a_Rc, kfc_a, a_h)
++    fc_k = sfb_fc(d_ik, sfb%a_Rc, kfc_a, a_h)
      w_ijk = fc_j*fc_k
--    f = chebyshev_polynomial(cos_ijk, 0.0d0, PI, sfb%a_order)
-+    
-+    if(switch_sfb)then
+-
+-    f = chebyshev_polynomial(cos_ijk, -1.0d0, 1.0d0, sfb%a_order)
+-
++    select case(switch_sfb)
++    case(-1)
++       f = chebyshev_polynomial(cos_ijk,  0.0d0, PI, sfb%a_order)
++    case(0)
++       f = chebyshev_polynomial(cos_ijk, -1.0d0, 1.0d0, sfb%a_order)
++    case(1)
 +       h_cos = 0.5d0*(cos_ijk+1.d0)
 +       f = chebyshev_polynomial(h_cos, -1.d0, 1.d0, sfb%a_order)
-+    else
-+       f = chebyshev_polynomial(cos_ijk, 0.0d0, PI, sfb%a_order)
-+    end if
- 
++    end select
++    
      values(1:sfb%a_N) = w_ijk*f
  
      if (present(deriv_i) .and. present(deriv_j) .and. present(deriv_k)) then
 -       dfc_j = sfb_fc_d1(d_ij, sfb%a_Rc)
 -       dfc_k = sfb_fc_d1(d_ik, sfb%a_Rc)
--       df = chebyshev_polynomial_d1(cos_ijk, 0.0d0, PI, sfb%a_order)
-+       
-+       if(switch_cff == 0)then
-+          dfc_j = sfb_fc_d1(d_ij, sfb%a_Rc)
-+          dfc_k = sfb_fc_d1(d_ik, sfb%a_Rc)
-+       else if(switch_cff == 1)then
-+          dfc_j = new_sfb_fcr_d1(d_ij, sfb%a_Rc, a_h)
-+          dfc_k = new_sfb_fcr_d1(d_ik, sfb%a_Rc, a_h)
-+       else if(switch_cff == 2)then
-+          dfc_j = new_sfb_fca_d1(d_ij, sfb%a_Rc, a_h)
-+          dfc_k = new_sfb_fca_d1(d_ik, sfb%a_Rc, a_h)
-+       else
-+          
-+       end if
-+       
-+       if(switch_sfb)then
+-       df = chebyshev_polynomial_d1(cos_ijk, -1.0d0, 1.0d0, sfb%a_order)
++       dfc_j = sfb_fc_d1(d_ij, sfb%a_Rc, kfc_a, a_h)
++       dfc_k = sfb_fc_d1(d_ik, sfb%a_Rc, kfc_a, a_h)
++       select case(switch_sfb)
++       case(-1)
++          df = chebyshev_polynomial_d1(cos_ijk,  0.0d0, PI, sfb%a_order)
++       case(0)
++          df = chebyshev_polynomial_d1(cos_ijk, -1.0d0, 1.0d0, sfb%a_order)
++       case(1)
 +          df = 0.5d0*chebyshev_polynomial_d1(h_cos, -1.0d0, 1.d0, sfb%a_order)
-+       else
-+          df = chebyshev_polynomial_d1(cos_ijk, 0.0d0, PI, sfb%a_order)
-+       end if
-+       
++       end select
         id_ij2 = 1.0d0/(d_ij*d_ij)
         id_ik2 = 1.0d0/(d_ik*d_ik)
         id_ij_ik = 1.0d0/(d_ij*d_ik)
-diff -u -r aenet-2.0.3/src/Makefile.inc aenet/src/Makefile.inc
---- aenet-2.0.3/src/Makefile.inc	2018-06-25 23:50:01.000000000 +0900
-+++ aenet/src/Makefile.inc	2020-05-29 15:52:17.875726683 +0900
-@@ -57,7 +57,7 @@
- generate : $(TARGET1)
- train    : $(TARGET2)
- predict  : $(TARGET3)
--lib      : libaenet.a libaenet.so
-+lib      : ../../libaenet.a libaenet.so
+diff -u -r aenet/src/ext/xsflib.f90 aenet_extend/src/ext/xsflib.f90
+--- aenet/src/ext/xsflib.f90	2021-01-27 18:16:31.399003372 +0900
++++ aenet_extend/src/ext/xsflib.f90	2021-01-27 18:17:52.919000687 +0900
+@@ -82,7 +82,7 @@
+   integer,                                       public :: nTypes
+   double precision,                              public :: unitCellVol
+   double precision, dimension(3,3),              public :: latticeVec
+-  character(len=2), dimension(:),   allocatable, public :: atomTypeName
++  character(len=4), dimension(:),   allocatable, public :: atomTypeName
+   integer,          dimension(:),   allocatable, public :: nAtomsOfType
+   integer,          dimension(:),   allocatable, public :: atomType
+   double precision, dimension(:,:), allocatable, public :: cooCart
+@@ -315,7 +315,7 @@
+     ! u_in, iline, line                                                !
+     !------------------------------------------------------------------!
  
- %.o : %.f90
- 	$(FC) $(FCFLAGS) $< -o $*.o
-@@ -83,15 +83,16 @@
- $(BIN)%.x : %.F90 $(OBJECTS) Makefile.inc
- 	$(LD) $(LDFLAGS) -o $@-$(version)-$(SUFFIX) $< $(OBJECTS) $(LIB) $(NUMLIB)
+-    character(len=2)       :: el
++    character(len=4)       :: el
+     character(len=LENLINE) :: str
+     integer                :: stat
+     integer                :: i, k
+@@ -372,7 +372,7 @@
+     !------------------------------------------------------------------!
  
--libaenet.a : $(OBJECTS) Makefile.inc
-+../../libaenet.a : $(OBJECTS) Makefile.inc
- 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
-+	@cp $(EXTRAMAKE) ../../Makefile.lammps
+     integer          :: iat, itype
+-    character(len=2) :: el
++    character(len=4) :: el
  
- libaenet.so : $(PICOBJECTS) Makefile.inc
- 	$(LIBLD) $(LIBFLAGS) $(PICOBJECTS) $(LIBLIB) -o $@
- 
- veryclean: clean
- 	for f in $(TARGETS); do rm -f $$f-*; done
--	if [ -e libaenet.a ]; then rm -f libaenet.a; fi
-+	if [ -e ../../libaenet.a ]; then rm -f ../../libaenet.a; fi
- 	if [ -e libaenet.so ]; then rm -f libaenet.so; fi
- 	if [ -e TAGS ]; then rm -f TAGS; fi
- 	for f in $(TESTS); do rm -f $$f-*; done
-diff -u -r aenet-2.0.3/src/makefiles/Makefile.gfortran_serial aenet/src/makefiles/Makefile.gfortran_serial
---- aenet-2.0.3/src/makefiles/Makefile.gfortran_serial	2018-06-25 23:50:01.000000000 +0900
-+++ aenet/src/makefiles/Makefile.gfortran_serial	2020-05-29 15:52:17.879726683 +0900
-@@ -18,12 +18,14 @@
+     ! read Cartesian coordinates and forces
+     do iat = 1, nAtoms
+diff -u -r aenet/src/makefiles/Makefile.gfortran_serial aenet_extend/src/makefiles/Makefile.gfortran_serial
+--- aenet/src/makefiles/Makefile.gfortran_serial	2021-01-27 18:16:31.399003372 +0900
++++ aenet_extend/src/makefiles/Makefile.gfortran_serial	2021-01-27 18:25:11.678986235 +0900
+@@ -25,12 +25,14 @@
  # 2015-05-26 Alexander Urban (AU) and Nongnuch Artrith (NA)
  #-----------------------------------------------------------------------
  
-+EXTRAMAKE = ../../Makefile.lammps.gfortran
++MY_SYSLIB   = -lgfortran
 +
  SUFFIX   = gfortran_serial
  
@@ -350,14 +361,22 @@ diff -u -r aenet-2.0.3/src/makefiles/Makefile.gfortran_serial aenet/src/makefile
  LDFLAGS  = -static-libgfortran $(DEBUG)
  NUMLIB   = -llapack -lblas
  
-diff -u -r aenet-2.0.3/src/makefiles/Makefile.ifort_serial aenet/src/makefiles/Makefile.ifort_serial
---- aenet-2.0.3/src/makefiles/Makefile.ifort_serial	2018-06-25 23:50:01.000000000 +0900
-+++ aenet/src/makefiles/Makefile.ifort_serial	2020-05-29 15:52:17.879726683 +0900
-@@ -18,11 +18,13 @@
+@@ -43,6 +45,6 @@
+ LIBLIB   = -lgfortran
+ 
+ AR       = ar
+-ARFLAGS  = -crUusv
++ARFLAGS  = -rc
+ 
+ include ./Makefile.inc
+diff -u -r aenet/src/makefiles/Makefile.ifort_serial aenet_extend/src/makefiles/Makefile.ifort_serial
+--- aenet/src/makefiles/Makefile.ifort_serial	2021-01-27 18:16:31.399003372 +0900
++++ aenet_extend/src/makefiles/Makefile.ifort_serial	2021-01-27 18:26:06.050984444 +0900
+@@ -25,11 +25,13 @@
  # 2015-05-26 Alexander Urban (AU) and Nongnuch Artrith (NA)
  #-----------------------------------------------------------------------
  
-+EXTRAMAKE = ../../Makefile.lammps.ifort
++MY_SYSLIB = -lifcore
 +
  SUFFIX   = ifort_serial
  
@@ -368,3 +387,89 @@ diff -u -r aenet-2.0.3/src/makefiles/Makefile.ifort_serial aenet/src/makefiles/M
  FCFLAGS  = -O2 $(DEBUG)
  LDFLAGS  = -static-intel $(DEBUG)
  NUMLIB   = -mkl
+@@ -43,6 +45,6 @@
+ LIBLIB   = -lgfortran
+ 
+ AR       = ar
+-ARFLAGS  = -crusv
++ARFLAGS  = -rc
+ 
+ include ./Makefile.inc
+diff -u -r aenet/src/sfsetup.f90 aenet_extend/src/sfsetup.f90
+--- aenet/src/sfsetup.f90	2021-01-27 18:16:31.399003372 +0900
++++ aenet_extend/src/sfsetup.f90	2021-01-27 18:17:52.919000687 +0900
+@@ -567,6 +567,11 @@
+     type(Setup)                                :: stp
+ 
+     integer :: u
++    character(len=2) :: ctmp2
++    character(len=4) :: ctmp4
++    character(len=2), dimension(:),   allocatable :: ctmpl2
++    character(len=4), dimension(:),   allocatable :: ctmpl4
++    integer :: error, i
+ 
+     if (present(unit)) then
+        u = unit
+@@ -583,10 +588,28 @@
+     stp%ntypes_global = size(global_types(:))
+ 
+     read(u) stp%description
+-    read(u) stp%atomtype
++    read(u,iostat=error) ctmp4
++    if (error == 0) then
++       stp%atomtype=ctmp4
++    else if(error > 0) then
++       backspace(u)
++       read(u,iostat=error) ctmp2
++       stp%atomtype=ctmp2
++    end if
+     read(u) stp%nenv
+     allocate(stp%envtypes(stp%nenv))
+-    read(u) stp%envtypes
++    allocate(ctmpl2(stp%nenv))
++    allocate(ctmpl4(stp%nenv))
++    read(u,iostat=error) ctmpl4
++    if (error == 0) then
++       stp%envtypes = ctmpl4
++    else if (error > 0) then
++       backspace(u)
++       read(u,iostat=error) ctmpl2
++       do i=1,stp%nenv
++          stp%envtypes(i) = ctmpl2(i)
++       end do
++    end if
+     read(u) stp%Rc_min
+     read(u) stp%Rc_max
+     read(u) stp%sftype
+diff -u -r aenet/src/trainset.f90 aenet_extend/src/trainset.f90
+--- aenet/src/trainset.f90	2021-01-27 18:16:31.403003372 +0900
++++ aenet_extend/src/trainset.f90	2021-01-27 18:17:52.919000687 +0900
+@@ -417,6 +417,9 @@
+     type(TrnSet)                           :: ts
+ 
+     integer :: u
++    character(len=2), dimension(:), allocatable :: ctmpl2
++    character(len=4), dimension(:), allocatable :: ctmpl4
++    integer :: error, i
+ 
+     if (present(unit)) then
+        u = unit
+@@ -436,7 +439,17 @@
+     read(u) ts%shift
+     read(u) ts%nTypes
+     allocate(ts%typeName(ts%nTypes), ts%E_atom(ts%nTypes))
+-    read(u) ts%typeName(1:ts%nTypes)
++    allocate(ctmpl2(ts%nTypes), ctmpl4(ts%nTypes))
++    read(u,iostat=error) ctmpl4(1:ts%nTypes)
++    if (error == 0) then
++       ts%typeName(1:ts%nTypes) = ctmpl4(1:ts%nTypes)
++    else if (error > 0) then
++       backspace(u)
++       read(u) ctmpl2(1:ts%nTypes)
++       do i = 1,ts%nTypes
++          ts%typeName(i) = ctmpl2(i)
++       end do
++    end if
+     read(u) ts%E_atom(1:ts%nTypes)
+     read(u) ts%nAtomsTot
+     read(u) ts%nStrucs
