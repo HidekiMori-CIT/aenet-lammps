@@ -32,18 +32,6 @@ diff -u -r aenet/src/Makefile.inc aenet_extend/src/Makefile.inc
  	if [ -e libaenet.so ]; then rm -f libaenet.so; fi
  	if [ -e TAGS ]; then rm -f TAGS; fi
  	for f in $(TESTS); do rm -f $$f-*; done
-diff -u -r aenet/src/aeio.f90 aenet_extend/src/aeio.f90
---- aenet/src/aeio.f90	2021-01-27 18:16:31.395003372 +0900
-+++ aenet_extend/src/aeio.f90	2021-01-27 18:17:52.915000687 +0900
-@@ -56,7 +56,7 @@
- 
-   integer, parameter, public :: LINELEN = 1024
-   integer, parameter, public :: PATHLEN = 1024
--  integer, parameter, public :: TYPELEN = 2
-+  integer, parameter, public :: TYPELEN = 4
-   integer, parameter, public :: STDIN   = 5
-   integer, parameter, public :: STDOUT  = 6
-   integer, parameter, public :: STDERR  = 0
 diff -u -r aenet/src/ext/feedforward.f90 aenet_extend/src/ext/feedforward.f90
 --- aenet/src/ext/feedforward.f90	2021-01-27 18:16:31.399003372 +0900
 +++ aenet_extend/src/ext/feedforward.f90	2021-01-27 18:17:52.919000687 +0900
@@ -312,36 +300,6 @@ diff -u -r aenet/src/ext/sfbasis.f90 aenet_extend/src/ext/sfbasis.f90
         id_ij2 = 1.0d0/(d_ij*d_ij)
         id_ik2 = 1.0d0/(d_ik*d_ik)
         id_ij_ik = 1.0d0/(d_ij*d_ik)
-diff -u -r aenet/src/ext/xsflib.f90 aenet_extend/src/ext/xsflib.f90
---- aenet/src/ext/xsflib.f90	2021-01-27 18:16:31.399003372 +0900
-+++ aenet_extend/src/ext/xsflib.f90	2021-01-27 18:17:52.919000687 +0900
-@@ -82,7 +82,7 @@
-   integer,                                       public :: nTypes
-   double precision,                              public :: unitCellVol
-   double precision, dimension(3,3),              public :: latticeVec
--  character(len=2), dimension(:),   allocatable, public :: atomTypeName
-+  character(len=4), dimension(:),   allocatable, public :: atomTypeName
-   integer,          dimension(:),   allocatable, public :: nAtomsOfType
-   integer,          dimension(:),   allocatable, public :: atomType
-   double precision, dimension(:,:), allocatable, public :: cooCart
-@@ -315,7 +315,7 @@
-     ! u_in, iline, line                                                !
-     !------------------------------------------------------------------!
- 
--    character(len=2)       :: el
-+    character(len=4)       :: el
-     character(len=LENLINE) :: str
-     integer                :: stat
-     integer                :: i, k
-@@ -372,7 +372,7 @@
-     !------------------------------------------------------------------!
- 
-     integer          :: iat, itype
--    character(len=2) :: el
-+    character(len=4) :: el
- 
-     ! read Cartesian coordinates and forces
-     do iat = 1, nAtoms
 diff -u -r aenet/src/makefiles/Makefile.gfortran_serial aenet_extend/src/makefiles/Makefile.gfortran_serial
 --- aenet/src/makefiles/Makefile.gfortran_serial	2021-01-27 18:16:31.399003372 +0900
 +++ aenet_extend/src/makefiles/Makefile.gfortran_serial	2021-01-27 18:25:11.678986235 +0900
@@ -395,81 +353,4 @@ diff -u -r aenet/src/makefiles/Makefile.ifort_serial aenet_extend/src/makefiles/
 +ARFLAGS  = -rc
  
  include ./Makefile.inc
-diff -u -r aenet/src/sfsetup.f90 aenet_extend/src/sfsetup.f90
---- aenet/src/sfsetup.f90	2021-01-27 18:16:31.399003372 +0900
-+++ aenet_extend/src/sfsetup.f90	2021-01-27 18:17:52.919000687 +0900
-@@ -567,6 +567,11 @@
-     type(Setup)                                :: stp
- 
-     integer :: u
-+    character(len=2) :: ctmp2
-+    character(len=4) :: ctmp4
-+    character(len=2), dimension(:),   allocatable :: ctmpl2
-+    character(len=4), dimension(:),   allocatable :: ctmpl4
-+    integer :: error, i
- 
-     if (present(unit)) then
-        u = unit
-@@ -583,10 +588,28 @@
-     stp%ntypes_global = size(global_types(:))
- 
-     read(u) stp%description
--    read(u) stp%atomtype
-+    read(u,iostat=error) ctmp4
-+    if (error == 0) then
-+       stp%atomtype=ctmp4
-+    else if(error > 0) then
-+       backspace(u)
-+       read(u,iostat=error) ctmp2
-+       stp%atomtype=ctmp2
-+    end if
-     read(u) stp%nenv
-     allocate(stp%envtypes(stp%nenv))
--    read(u) stp%envtypes
-+    allocate(ctmpl2(stp%nenv))
-+    allocate(ctmpl4(stp%nenv))
-+    read(u,iostat=error) ctmpl4
-+    if (error == 0) then
-+       stp%envtypes = ctmpl4
-+    else if (error > 0) then
-+       backspace(u)
-+       read(u,iostat=error) ctmpl2
-+       do i=1,stp%nenv
-+          stp%envtypes(i) = ctmpl2(i)
-+       end do
-+    end if
-     read(u) stp%Rc_min
-     read(u) stp%Rc_max
-     read(u) stp%sftype
-diff -u -r aenet/src/trainset.f90 aenet_extend/src/trainset.f90
---- aenet/src/trainset.f90	2021-01-27 18:16:31.403003372 +0900
-+++ aenet_extend/src/trainset.f90	2021-01-27 18:17:52.919000687 +0900
-@@ -417,6 +417,9 @@
-     type(TrnSet)                           :: ts
- 
-     integer :: u
-+    character(len=2), dimension(:), allocatable :: ctmpl2
-+    character(len=4), dimension(:), allocatable :: ctmpl4
-+    integer :: error, i
- 
-     if (present(unit)) then
-        u = unit
-@@ -436,7 +439,17 @@
-     read(u) ts%shift
-     read(u) ts%nTypes
-     allocate(ts%typeName(ts%nTypes), ts%E_atom(ts%nTypes))
--    read(u) ts%typeName(1:ts%nTypes)
-+    allocate(ctmpl2(ts%nTypes), ctmpl4(ts%nTypes))
-+    read(u,iostat=error) ctmpl4(1:ts%nTypes)
-+    if (error == 0) then
-+       ts%typeName(1:ts%nTypes) = ctmpl4(1:ts%nTypes)
-+    else if (error > 0) then
-+       backspace(u)
-+       read(u) ctmpl2(1:ts%nTypes)
-+       do i = 1,ts%nTypes
-+          ts%typeName(i) = ctmpl2(i)
-+       end do
-+    end if
-     read(u) ts%E_atom(1:ts%nTypes)
-     read(u) ts%nAtomsTot
-     read(u) ts%nStrucs
+
