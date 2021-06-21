@@ -4,7 +4,7 @@
 2020/11/12: Bug fix of pair_aenet.cpp for binary system.  
 2020/11/26: Slightly modify the pair_aenet.cpp to output detail error message.  
 2020/11/29: Add the TiO2 directory which contains example potential files and LAMMPS input file for binary system.  
-2021/06/21: Add the new Fe parameter file and example of LAMMPS input file in Fe_v03. 
+2021/06/21: Add the new Fe parameter file and example file for LAMMPS input in Fe_v03. 
 
 # About this package
 
