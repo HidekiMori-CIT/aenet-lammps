@@ -1,0 +1,103 @@
+LAMMPS (29 Oct 2020)
+atom_style      atomic
+units           metal
+boundary        p p p
+
+lattice         bcc 2.9
+Lattice spacing in x,y,z = 2.9000000 2.9000000 2.9000000
+region          region1 block 0 1 0 1 0 1 units lattice
+create_box      1 region1
+Created orthogonal box = (0.0000000 0.0000000 0.0000000) to (2.9000000 2.9000000 2.9000000)
+  1 by 1 by 1 MPI processor grid
+
+create_atoms    1 box
+Created 2 atoms
+  create_atoms CPU = 0.000 seconds
+
+pair_style      aenet
+pair_coeff      * * v03 Fe 10sw-10sw.nn Fe
+mass            1 55.845
+
+thermo_style    custom step pe lx vol press
+thermo          10
+
+fix             f1 all box/relax iso 0.0
+
+minimize        1.0e-20 0.0 1000 100000
+WARNING: Using 'neigh_modify every 1 delay 0 check yes' setting during minimization (../min.cpp:187)
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7.5
+  ghost atom cutoff = 7.5
+  binsize = 3.75, bins = 1 1 1
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair aenet, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.115 | 4.115 | 4.115 Mbytes
+Step PotEng Lx Volume Press 
+       0    -8959.711          2.9       24.389   -103551.07 
+      10   -8959.7156       2.8971    24.315906    -100592.6 
+      20   -8959.7201       2.8942    24.242958   -97518.731 
+      30   -8959.7245       2.8913    24.170157   -94322.258 
+      40   -8959.7287       2.8884    24.097501   -90995.558 
+      50   -8959.7327       2.8855    24.024991   -87530.618 
+      60   -8959.7366       2.8826    23.952627   -83919.105 
+      70   -8959.7403       2.8797    23.880408   -80152.496 
+      80   -8959.7438       2.8768    23.808334   -76222.262 
+      90   -8959.7471       2.8739    23.736406   -72120.107 
+     100   -8959.7503        2.871    23.664622   -67838.267 
+     110   -8959.7532       2.8681    23.592984    -63369.86 
+     120   -8959.7559       2.8652     23.52149   -58709.274 
+     130   -8959.7584       2.8623    23.450141   -53852.571 
+     140   -8959.7607       2.8594    23.378936   -48797.896 
+     150   -8959.7628       2.8565    23.307875   -43545.853 
+     160   -8959.7646       2.8536    23.236959   -38099.811 
+     170   -8959.7661       2.8507    23.166186    -32466.12 
+     180   -8959.7674       2.8478    23.095558   -26654.181 
+     190   -8959.7685       2.8449    23.025073   -20676.362 
+     200   -8959.7693        2.842    22.954732   -14547.711 
+     210   -8959.7698       2.8391    22.884534   -8285.4642 
+     220     -8959.77       2.8362    22.814479   -1908.3454 
+     224     -8959.77    2.8353409    22.793754 -2.8068085e-08 
+Loop time of 0.135085 on 1 procs for 224 steps with 2 atoms
+
+87.5% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+     -8959.71095216515  -8959.76999580016  -8959.76999580016
+  Force two-norm initial, final = 4.7288932 1.2252886e-12
+  Force max component initial, final = 4.7288932 1.2252713e-12
+  Final line search alpha, max atom move = 1.0000000 1.2252713e-12
+  Iterations, force evaluations = 224 226
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.12862    | 0.12862    | 0.12862    |   0.0 | 95.22
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.0014979  | 0.0014979  | 0.0014979  |   0.0 |  1.11
+Output  | 0.00068703 | 0.00068703 | 0.00068703 |   0.0 |  0.51
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.004278   |            |       |  3.17
+
+Nlocal:        2.00000 ave           2 max           2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        557.000 ave         557 max         557 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:        0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      272.000 ave         272 max         272 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 272
+Ave neighs/atom = 136.00000
+Neighbor list builds = 0
+Dangerous builds = 0
+
+Total wall time: 0:00:00

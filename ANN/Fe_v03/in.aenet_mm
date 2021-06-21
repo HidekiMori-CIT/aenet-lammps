@@ -1,0 +1,21 @@
+atom_style      atomic
+units           metal
+boundary        p p p
+
+lattice         bcc 2.9
+region          region1 block 0 1 0 1 0 1 units lattice
+create_box      1 region1
+
+create_atoms    1 box
+
+pair_style      aenet
+pair_coeff      * * v03 Fe 10sw-10sw.nn Fe
+mass            1 55.845
+
+thermo_style    custom step pe lx vol press
+thermo          10
+
+fix             f1 all box/relax iso 0.0
+
+minimize        1.0e-20 0.0 1000 100000
+
