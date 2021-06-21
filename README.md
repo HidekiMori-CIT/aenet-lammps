@@ -3,7 +3,8 @@
 2020/11/12: Update the LAMMPS version in README (this file).  
 2020/11/12: Bug fix of pair_aenet.cpp for binary system.  
 2020/11/26: Slightly modify the pair_aenet.cpp to output detail error message.  
-2020/11/29: Add the TiO2 directory which contains example potential files and LAMMPS input file for binary system.
+2020/11/29: Add the TiO2 directory which contains example potential files and LAMMPS input file for binary system.  
+2021/06/21: Add the new Fe parameter file and example of LAMMPS input file in Fe_v03. 
 
 # About this package
 
@@ -86,6 +87,7 @@ If you have multi atom type such as atom type 1:Fe(free), 2:Fe(fix), set pair_st
 pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe 
 ```
 note: Please see TiO2 directory for binary system.
+note: **_v03_** is for new parameter file (see example file in Fe_v03).
 
 # Citing of this package and ANN potential
 Please use this bibtex,  
