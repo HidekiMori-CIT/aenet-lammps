@@ -35,7 +35,7 @@ cp -r ./aenet-lammps/USER-AENET/ ./lammps-stable_29Sep2021/src/
 cp -r ./aenet-lammps/aenet/ ./lammps-stable_29Sep2021/lib/
 ```
 
-4. Clone, patch and compile aenet(-2.0.4) as library for LAMMPS at lammps-stable_29Sep2021/lib/.
+4. Clone, patch and compile aenet(-2.0.4) as library for LAMMPS at lammps-stable_29Sep2021/lib/aenet.
 ```
 cd lammps-stable_29Sep2021/lib/aenet/
 git clone https://github.com/atomisticnet/aenet.git
@@ -78,8 +78,8 @@ pair_coeff      * * v01 Fe 10tw-10tw.ann Fe
 ```
 
 The pair_style line might be always same.
-In pair_coeff line, v01 means to use our original version. 
-**_If you chose v00, you can use parameter file from original aenet(-2.0.4) package._**
+In pair_coeff line, **_v01_** means to use our modified version. 
+If you chose **_v00_**, you can use parameter file from **_original aenet-2.0.4_** package.
 The Fe between v01 and 10tw-10tw.ann set element(s).
 The term:10tw-10tw.ann is **_file mask_** for name of parameter file, in this case, file name is set as Fe.10tw-10tw.ann.
 The final Fe assign elements to atom type.
@@ -89,7 +89,7 @@ pair_coeff      * * v01 Fe 10tw-10tw.ann Fe Fe
 ```
 _note_: Please see TiO2 directory for binary system.  
 _note_: **_v03_** is for new parameter file (see example file in Fe_v03).  
-_note_: **_v-1_** is for original aenet **_-2.0.3_** parameter files (see example file in TiO2).  
+_note_: **_v-1_** is for **_original aenet-2.0.3_** parameter files (see example file in TiO2).  
 
 # Citing of this package and ANN potential
 Please use this bibtex,  
