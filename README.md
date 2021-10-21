@@ -29,7 +29,7 @@ wget https://github.com/lammps/lammps/archive/refs/tags/stable_29Sep2021.tar.gz
 tar -xvzf stable_29Sep2021.tar.gz
 ``` 
 
-3. Copy USER-AENET/ and aenet/ in aenet-lammps/ to lammps(-29Sep2021)/src and /lib, respectively.
+3. Copy USER-AENET/ and aenet/ in aenet-lammps/ to lammps-stable_29Sep2021/src and /lib, respectively.
 ```
 cp -r ./aenet-lammps/USER-AENET/ ./lammps-stable_29Sep2021/src/
 cp -r ./aenet-lammps/aenet/ ./lammps-stable_29Sep2021/lib/
