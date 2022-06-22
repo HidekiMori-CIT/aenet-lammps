@@ -103,6 +103,7 @@ void PairAENET::compute(int eflag, int vflag)
   int nfc_num = nf_num*3;
   double *f_ann = new double[nfc_num];
   
+  double delx,dely,delz,fx,fy,fz;
   
   int stat;
   for (ii = 0; ii < inum; ii++) {
@@ -145,6 +146,16 @@ void PairAENET::compute(int eflag, int vflag)
       
       jtmp = 3*(jj+1);
       for (kk = 0; kk < 3; kk++)f[j][kk] += f_ann[jtmp + kk];
+      if(evflag){
+        delx = x[i][0] - x[j][0];
+        dely = x[i][1] - x[j][1];
+        delz = x[i][2] - x[j][2];
+        fx = -f_ann[jtmp+0];
+        fy = -f_ann[jtmp+1];
+        fz = -f_ann[jtmp+2];
+	ev_tally_xyz(i,j,nlocal,newton_pair,0.0,0.0,fx,fy,fz,delx,dely,delz);
+      }
+
       
     }
     
