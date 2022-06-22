@@ -1,0 +1,28 @@
+atom_style      atomic
+units           metal
+boundary        p p p
+
+lattice         bcc 2.83517
+region          region1 block 0 2 0 2 0 2 units lattice
+create_box      1 region1
+
+create_atoms    1 box
+
+pair_style      aenet
+pair_coeff      * * v03 Fe 10sw-10sw.nn Fe
+mass            1 55.845
+
+compute        peratom all stress/atom NULL
+compute        p all reduce sum c_peratom[1] c_peratom[2] c_peratom[3]
+variable       press equal -(c_p[1]+c_p[2]+c_p[3])/(3*vol)
+thermo_style   custom step temp etotal pe ke press v_press
+thermo         100
+
+reset_timestep  0
+timestep        0.0005
+
+velocity        all create 500 12345 dist gaussian
+
+fix             f1 all nve
+run             5000
+
