@@ -1,6 +1,6 @@
 # Update
 2022/07/05: Update pair_aenet.cpp for latest version of LAMMPS(stable_23Jun2022)  
-_note_: Please use 2022Jun05.tar.gz in release for old version of LAMMPS  
+_note_: Please use 2022Jul05.tar.gz in release for old version of LAMMPS  
 2022/07/01: Update pair_aenet.cpp to suport **compute stress/atom** command of LAMMPS (beta release).  
 2022/01/26: Update the patch file and the README.md to fix minor bug.  
 2021/10/21: Update the patch file and modify the README.md for latest version of LAMMPS and aenet.  
