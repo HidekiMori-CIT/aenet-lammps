@@ -1,4 +1,6 @@
 # Update
+2022/07/05: Update pair_aenet.cpp for latest version of LAMMPS(stable_23Jun2022)  
+_note_: Please use 2022Jun05.tar.gz in release for old version of LAMMPS  
 2022/07/01: Update pair_aenet.cpp to suport **compute stress/atom** command of LAMMPS (beta release).  
 2022/01/26: Update the patch file and the README.md to fix minor bug.  
 2021/10/21: Update the patch file and modify the README.md for latest version of LAMMPS and aenet.  
@@ -25,21 +27,21 @@ However, if you have any troubles and questions, feel free to contact package au
 git clone https://github.com/HidekiMori-CIT/aenet-lammps.git
 ```
 
-2. Download and unpack LAMMPS package (currently stable_29Sep2021.tar.gz) from Github to same directory of aenet-lammps:  
+2. Download and unpack LAMMPS package (currently stable_23Jun2022.tar.gz) from Github to same directory of aenet-lammps:  
 ``` 
-wget https://github.com/lammps/lammps/archive/refs/tags/stable_29Sep2021.tar.gz
-tar -xvzf stable_29Sep2021.tar.gz
+wget https://github.com/lammps/lammps/archive/refs/tags/stable_23Jun2022.tar.gz
+tar -xvzf stable_23Jun2022.tar.gz
 ``` 
 
-3. Copy USER-AENET/ and aenet/ in aenet-lammps/ to lammps-stable_29Sep2021/src and /lib, respectively.
+3. Copy USER-AENET/ and aenet/ in aenet-lammps/ to lammps-stable_23Jun2022/src and /lib, respectively.
 ```
-cp -r ./aenet-lammps/USER-AENET/ ./lammps-stable_29Sep2021/src/
-cp -r ./aenet-lammps/aenet/ ./lammps-stable_29Sep2021/lib/
+cp -r ./aenet-lammps/USER-AENET/ ./lammps-stable_23Jun2022/src/
+cp -r ./aenet-lammps/aenet/ ./lammps-stable_23Jun2022/lib/
 ```
 
-4. Clone, patch and compile aenet(-2.0.4) as library for LAMMPS at lammps-stable_29Sep2021/lib/aenet.
+4. Clone, patch and compile aenet(-2.0.4) as library for LAMMPS at lammps-stable_23Jun2022/lib/aenet.
 ```
-cd lammps-stable_29Sep2021/lib/aenet/
+cd lammps-stable_23Jun2022/lib/aenet/
 git clone https://github.com/atomisticnet/aenet.git
 patch -u -p1 -d aenet/ < aenet_lammps.patch
 cd aenet/src/
@@ -76,7 +78,7 @@ In ANN/Fe/ directory parameter file and example input file for LAMMPS
 
 To check the LAMMPS work properly, for example, in ANN/Fe/ directory
 ```
-../../../lammps-stable_29Sep2021/src/lmp_mpi -i in.aenet_mm
+../../../lammps-stable_23Jun2022/src/lmp_mpi -i in.aenet_mm
 ```
 After job done, please check lattice constant (lx) in log.lammps and log.lammps.g++_mm
 
