@@ -103,7 +103,8 @@ _note_: **_v03_** is for new parameter file (see example file in Fe_v03).
 _note_: **_v-1_** is for **_original aenet-2.0.3_** parameter files (see example file in TiO2).  
 
 # Citing of this package and ANN potential
-Please use this bibtex,  
+[1] H. Mori and T. Ozaki, Phys. Rev. Mater. 4, 040601 (2020).  
+Or please use this bibtex,   
 @article{mori2020neural,  
   title={Neural network atomic potential to investigate the dislocation dynamics in bcc iron},  
   author={Mori, Hideki and Ozaki, Taisuke},  
