@@ -1,0 +1,31 @@
+diff -r -u src_orig/network.py src/network.py
+--- src_orig/network.py	2023-05-11 19:49:33.715975602 +0900
++++ src/network.py	2023-05-11 19:49:59.373974696 +0900
+@@ -27,6 +27,7 @@
+ 		self.linear  = nn.Identity()
+ 		self.tanh    = nn.Tanh()
+ 		self.sigmoid = nn.Sigmoid()
++		self.swish   = nn.SiLU()
+ 		self.activations = []
+ 		for i in range(len(species)):
+ 			aux = []
+@@ -37,6 +38,8 @@
+ 					aux.append(self.tanh)
+ 				if activations[i][j] == "sigmoid":
+ 					aux.append(self.sigmoid)
++				if activations[i][j] == "swish":
++					aux.append(self.swish)
+ 			self.activations.append(aux)
+ 
+ 		self.functions = []
+diff -r -u src_orig/output_nn.py src/output_nn.py
+--- src_orig/output_nn.py	2023-05-11 19:52:20.344969718 +0900
++++ src/output_nn.py	2023-05-11 19:52:05.839970230 +0900
+@@ -36,6 +36,7 @@
+ 		if model.active_names[iesp][i] == "linear":  fun[i] = 0
+ 		if model.active_names[iesp][i] == "tanh":    fun[i] = 1
+ 		if model.active_names[iesp][i] == "sigmoid": fun[i] = 2
++		if model.active_names[iesp][i] == "swish":   fun[i] = 5
+ 
+ 	fun.append(0)
+ 
